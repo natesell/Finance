@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import norm
 import sys
+from alpha_vantage.timeseries import TimeSeries
 
 TRADING_DAYS_PER_YEAR = 252
 
@@ -49,6 +50,23 @@ class YahooFinanceHistory:
         response = self.session.get(url)
         response.raise_for_status()
         return pd.read_csv(StringIO(response.text), parse_dates=['Date'])
+
+
+class APIQuery:
+    # Note: TimeSeries normally takes one input which is your AlphaVantage API key.
+    #       If you have your API key saved in an environment variable called 'ALPHAVANTAGE_API_KEY',
+    #       then your API key will automatically be pulled. I've excluded my API key for safety.
+    ts = TimeSeries(output_format='pandas')
+
+    # "ticker" param is a string of the stock ticker you are querying
+    # returns a pandas Series object with full history of daily adjusted price history by date
+    @staticmethod
+    def get_daily_adj_close_as_series(ticker):
+        data, metadata = APIQuery.ts.get_daily_adjusted(ticker, outputsize='full')
+        if data.isnull().sum().sum() > 0:
+            raise ValueError("There is at least one piece of data that is null.")
+        else:
+            return data['5. adjusted close']
 
 
 # asset_classes = [
