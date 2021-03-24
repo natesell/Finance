@@ -59,7 +59,7 @@ class APIQuery:
     ts = TimeSeries(output_format='pandas')
 
     # "ticker" param is a string of the stock ticker you are querying
-    # returns a pandas Series object with full history of daily adjusted price history by date
+    # returns a pandas Series object with full history of daily adjusted price with index of dates
     @staticmethod
     def get_daily_adj_close_as_series(ticker):
         data, metadata = APIQuery.ts.get_daily_adjusted(ticker, outputsize='full')
@@ -210,6 +210,15 @@ def price_series_to_return_series(price_series):
         return_series.append(np.log(price_series[i+1]/price_series[i]))
 
     return return_series
+
+
+def calc_sma(price_list, days):
+    sum_of_prices = 0
+    prices = price_list.copy()[-1*days:]
+    for price in prices:
+        sum_of_prices += price
+
+    return round(sum_of_prices / len(prices), 2)
 
 
 def calc_portfolio_vol_two_assets(weights, standard_deviations, correlation):
