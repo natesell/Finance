@@ -4,21 +4,6 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 
-# TODO | (1) --------------Make the implementation here match the implementation funcs------------------------
-# TODO |     The function within funcs still uses look_back as a parameter, however I still feel doing away
-# TODO |         with such a thing would be for the best, instead using two separate, sensible lookbacks (vol vs cov)
-# TODO |     Indeed, below I raise an error if any of the price series have less days than the hardcoded cov look back
-# TODO |     Either way, the function in funcs (or I suppose, here, but don't recommend it) needs to change to match
-# TODO |         each other
-
-# TODO | (2) --------------Investigate (see notes on phone) a better way to forecast covariance------------------------
-# TODO |     Steve recommended to us a few separate things to try to find a forecaster that has some predictability
-# TODO |     We had tried (backtest.py) to find a look back for covariance that could provide any insight into forward
-# TODO |          30 day covariance, however, from our personal back testing, there wasn't any day that provided any
-# TODO |          predictability
-# TODO |     So we need to new strategies to find a useful way to forecast cov, or instead opt to find a way to predict
-# TODO |          bounds on forward covariance, then fit ourselves reasonably within that for each monthly prediction
-
 LOOK_BACK = 90
 # all below ETFs use 1/PE_ratio to find annual return, bond ETFs I use actual bond yields
 # equal to the average maturity of the holdings of that ETF
@@ -28,7 +13,6 @@ EWJ_return = 0.0497
 TAN_return = 0.0068
 IEF_return = 0.0130  # updated using 2/26/2021 bond yields avg of 7 yr and 10 yr yields
 XHE_return = 0.0207
-
 
 csv_data = pd.read_csv('Excel Sheets/SPY.csv')
 spy_adj_close = csv_data["Adj Close"].to_numpy()
@@ -57,11 +41,6 @@ asset_classes = [
     {'ticker': "IEF", 'annual_return': IEF_return, 'price_list': ief_adj_close},
     {'ticker': "XHE", 'annual_return': XHE_return, 'price_list': xhe_adj_close},
 ]
-#
-#asset_classes = [
-#    {'ticker': "SPY", 'annual_return': SPY_return, 'price_list': spy_adj_close},
-#    {'ticker': "TLT", 'annual_return': TLT_return, 'price_list': tlt_adj_close}
-#]
 vol_look_back = 90  # auto-set (study should be done to alter this number)
 cov_look_back = 252  # auto-set (study should be done to alter this number)
 graph_results = False  # auto-set
